@@ -2,7 +2,7 @@
 from typing import Optional
 from enum import Enum
 #Pydantic
-from pydantic import BaseModel
+from pydantic import BaseModel,HttpUrl, ValidationError
 from pydantic import Field
 #FastAPI
 from fastapi import FastAPI
@@ -12,6 +12,9 @@ app = FastAPI()
 
 #Models
 
+class url_validate(BaseModel):
+    url:HttpUrl
+
 class HairColor(Enum):
     white= "white"
     brown = "brown"
@@ -20,29 +23,56 @@ class HairColor(Enum):
     red = "red"
 
 class Location(BaseModel):
-    city: str
-    state: str
-    country: str
+    city: str = Field(
+        title = "City of the person",
+        description = "This field is important to get a good performance at the platform",
+        example = "Puebla"
+    )
+    state: str = Field(
+        title = "State of Person",
+        description="It's important your state",
+        example = "Puebla"
+    )
+    country: str = Field(
+        title = "Country of person",
+        description="It's important to know your location",
+        example = "Mexico"
+    )
 
 class Person(BaseModel):
     first_name: str = Field(
         ...,
         min_Length=1,
-        max_Length=50 )
+        max_Length=50,
+        example="David",
+         )
 
     last_name: str = Field(
         ...,
         min_Length=1,
-        max_Length=50 )
+        max_Length=50,
+        example = "Castillo" )
     age: int = Field(
         ...,
         gt=0,
         Le=115,
+        example = 25
 
     )
-    hair_color: Optional[HairColor] = Field(default=None)
-    is_married: Optional[bool] = Field(default=None)
+    hair_color: Optional[HairColor] = Field(default=None, example="black")
+    is_married: Optional[bool] = Field(default=None, example=False)
 
+    # class Config:
+    #     schema_extra = {
+    #         "example":{
+    #             "first_name": "David",
+    #             "last_name": "Castillo Castro",
+    #             "age":"21",
+    #             "hair_color": "blonde",
+    #             "is_married": False
+
+    #         }
+    #     }
 @app.get("/")
 
 def home():
@@ -100,6 +130,7 @@ def update_person(
     person:Person=Body(...),
     Location: Location = Body(...)
 ):
-    results = person.dict()
-    results.update(Location.dict())
-    return results
+    # results = person.dict()
+    # results.update(Location.dict())
+    # return results
+    return person
