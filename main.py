@@ -92,13 +92,15 @@ def show_person(
         min_Length=1, 
         max_Length=50,
         title="Person Name",
-        description="This is the person name. It's between and 50 characters"
+        description="This is the person name. It's between and 50 characters",
+        example="Rocio"
         ),
         
     age: str = Query(
         ...,
         title = "Person Age",
-        description="this is the person age. It's required"
+        description="this is the person age. It's required",
+        example=25
         )
     ):
 
@@ -111,6 +113,7 @@ def show_person(
     person_id: int = Path(
         ..., 
         gt=0,
+        example=123,
         title = "Person Age",
         description="This is the person id. It's required.")
 ):
@@ -124,7 +127,8 @@ def update_person(
         ...,
         title = "Person ID",
         description = "This is the person ID",
-        gt=0
+        gt=0,
+        example=123
 
     ),
     person:Person=Body(...),
